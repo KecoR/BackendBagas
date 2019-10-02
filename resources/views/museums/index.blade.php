@@ -27,6 +27,7 @@
                             <td>No</td>
                             <td>Nama Museum</td>
                             {{-- <td>Deskripsi Museum</td> --}}
+                            <td id="price">Harga Museum</td>
                             <td>Gambar Museum</td>
                             <td>Poin Museum</td>
                             <td style="width:10%">Aksi</td>
@@ -38,6 +39,7 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $museum->museum_name }}</td>
                                 {{-- <td>{!! str_limit($museum->museum_desc, $limit = 50, $end = '...') !!}</td> --}}
+                                <td>{{ $museum->museum_price }}</td>
                                 <td>
                                     @if ($museum->museum_image)
                                         <img src="{{ asset('image/museums/'.$museum->museum_image) }}" width="70px">
@@ -62,12 +64,9 @@
 @section('js')
     <script>
         $(document).ready(function(){
-        $("table").DataTable({
-            "ordering" : false
+            $("table").DataTable({
+                "ordering" : false
             });
-        });
-        $(document).ready(function() {
-            $('#museum_desc').cleditor();
         });
         $(document).on("click",".delbutton",function(){
         let url = $(this).attr('data-url');
@@ -96,6 +95,7 @@
                 $("#museum_name").val(data.museum_name);
                 $("#museum_desc").val(data.museum_desc);
                 $("#museum_rating").val(data.museum_rating);
+                $("#museum_price").val(data.museum_price);
                 $("#editModal").modal('show');
             });
         });
@@ -122,6 +122,10 @@
                         <div class="form-group">
                             <label for="museum_desc">Deskripsi Museum</label>
                             <textarea name="museum_desc" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="museum_price">Harga Museum</label>
+                            <input type="text" name="museum_price" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="museum_image">Gambar Museum</label>
@@ -158,6 +162,10 @@
                             <textarea name="museum_desc" id="museum_desc" class="form-control"></textarea>
                         </div>
                         <div class="form-group">
+                            <label for="museum_price">Harga Museum</label>
+                            <input type="text" name="museum_price" id="museum_price" class="form-control">
+                        </div>
+                        <div class="form-group">
                             <label for="image">Foto</label>
                             <hr>
                             <div style="text-align:center">
@@ -169,8 +177,8 @@
                             <span style="font-size: 10px;">Kosongkan jika tidak ingin mengubah Foto</span>
                         </div>
                         <div class="form-group">
-                            <label for="rating">Rating Museum</label>
-                            <input type="text" name="rating" id="rating" class="form-control" disabled>
+                            <label for="museum_rating">Rating Museum</label>
+                            <input type="text" name="museum_rating" id="museum_rating" class="form-control" disabled>
                         </div>
                     </div>
                     <div class="modal-footer">

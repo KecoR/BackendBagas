@@ -95,7 +95,7 @@
                 @if (\Auth::user()->role_id === 1)
                   <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                       <div class="card card-statistic-1">
-                          <a href="#">
+                          <a href="{{ route('users') }}">
                             <div class="card-icon bg-primary">
                               <i class="far fa-user"></i>
                             </div>
@@ -116,7 +116,7 @@
                   </div>
                     <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
-                        <a href="#">
+                        <a href="{{ route('roles') }}">
                           <div class="card-icon bg-danger">
                             <i class="fas fa-user-tag"></i>
                           </div>
@@ -126,14 +126,18 @@
                             <h4>Role</h4>
                         </div>
                         <div class="card-body">
-                          
+                          @php
+                           $role = \App\Role::all();
+                           
+                           echo $role->count();
+                          @endphp
                         </div>
                         </div>
                     </div>
                     </div>
                     <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
-                        <a href="#">
+                        <a href="{{ route('museums') }}">
                           <div class="card-icon bg-warning">
                             <i class="fas fa-hotel"></i>
                             </div>
@@ -143,7 +147,11 @@
                             <h4>Museum</h4>
                         </div>
                         <div class="card-body">
-                          
+                          @php
+                              $museum = \App\Museum::all();
+
+                              echo $museum->count();
+                          @endphp
                         </div>
                         </div>
                     </div>

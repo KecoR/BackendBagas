@@ -20,6 +20,7 @@ class MuseumController extends Controller
         $museum = new Museum;
         $museum->museum_name = $request->get('museum_name');
         $museum->museum_desc = $request->get('museum_desc');
+        $museum->museum_price = $request->get('museum_price');
 
         $image = $request->file('museum_image');
         $allowed_extension = ['png','jpg','jpeg','bmp'];
@@ -49,6 +50,7 @@ class MuseumController extends Controller
 
         $museum->museum_name = $request->get('museum_name');
         $museum->museum_desc = $request->get('museum_desc');
+        $museum->museum_price = $request->get('museum_price');
 
         if ($request->file('image')) {
             if ($museum->museum_image && file_exists('image/museums/'.$museum->museum_image)) {

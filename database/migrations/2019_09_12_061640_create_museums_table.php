@@ -18,6 +18,7 @@ class CreateMuseumsTable extends Migration
             $table->string('museum_name');
             $table->longText('museum_desc');
             $table->string('museum_image');
+            $table->string('museum_price');
             $table->string('museum_rating')->nullable();
             $table->timestamps();
         });
