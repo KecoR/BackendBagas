@@ -19,7 +19,7 @@ class CreateOrdersTable extends Migration
             $table->bigInteger('museum_id');
             $table->bigInteger('pemandu_id');
             $table->string('rating')->nullable();
-            $table->char('status', 1)->default('0');
+            $table->char('status', 5)->default('0');
             $table->timestamps();
         });
     }

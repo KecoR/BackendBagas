@@ -47,7 +47,7 @@ class MobileController extends Controller
             $user->no_hp = $request->get('no_hp');
             $user->alamat = $request->get('alamat');
             $user->date_birth = $request->get('date_birth');
-            $user->role_id = 3;
+            $user->role_id = $request->get('role');
             $user->save();
 
             return response()->json(['statusCode' => 1, 'data' => 'OK']);
@@ -158,7 +158,7 @@ class MobileController extends Controller
 
             $this->collaborativeFilter($order->museum_id);
 
-            return response()->json(['statusCode' => 1, 'data' => 'OK']);
+            return response()->json(['statusCode' => 1, 'data' => 'Berhasil Memberikan Ratin']);
         } else {
             return response()->json(['statusCode' => 0, 'data' => 'Data Tidak Ditemukan']);
         }
@@ -185,7 +185,8 @@ class MobileController extends Controller
 
     public function historyOrder($id)
     {
-        $history = Order::where('pelanggan_id', $id)->get();
+        // $history = Order::where('pelanggan_id', $id)->get();
+        $history = Order::where('pelanggan_id', $id)->with('pemandu', 'museum')->get();
 
         if (count($history) > 0) {
             return response()->json(['statusCode' => 1, 'data' => $history]);
