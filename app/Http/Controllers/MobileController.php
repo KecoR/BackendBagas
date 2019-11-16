@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Events\OrderEvent;
+
 use App\User;
 use App\Topup;
 use App\Museum;
@@ -74,6 +76,10 @@ class MobileController extends Controller
         $email = $request->get('email');
         $email_old = $request->get('email_old');
         $image = $request->get('image');
+        $birth = $request->get('date_birth');
+        $password = $request->get('password');
+
+        $finalBirth = date('Y-m-d', strtotime($birth));
 
         if (!empty($user)) {
             $cekEmail = User::where('email', $email)->first();
@@ -81,14 +87,16 @@ class MobileController extends Controller
             if (empty($cekEmail) || $cekEmail->email == $email_old) {
                 $user->full_name = $request->get('full_name');
                 $user->email = $request->get('email');
-                $user->password = Hash::make($request->get('password'));
+                if (!empty($password)) {
+                    $user->password = Hash::make($request->get('password'));
+                }
                 $user->no_hp = $request->get('no_hp');
                 $user->alamat = $request->get('alamat');
-                $user->date_birth = $request->get('date_birth');
+                $user->date_birth = $finalBirth;
                 
                 if (!empty($image)) {
                     $imageUpload = base64_decode($image);
-                    $imageName = \Str::slug($request->get('full_name'),'-').'.'.$avatar->getClientOriginalExtension();
+                    $imageName = \Str::slug($request->get('full_name'),'-').'.'.$imageUpload->getClientOriginalExtension();
 
                     file_put_contents('image/users/'.$imageName, $imageUpload);
 
@@ -109,7 +117,7 @@ class MobileController extends Controller
     //Modul Pelanggan
     public function getMuseumData()
     {
-        $museum = Museum::orderBy('museum_rating', 'DESC')->get();
+        $museum = Museum::orderBy("museum_rating", "desc")->get();
 
         if (!empty($museum)) {
             return response()->json(['statusCode' => 1, 'data' => $museum]);
@@ -141,10 +149,23 @@ class MobileController extends Controller
             $order->pemandu_id = $pemandu->id;
             $order->save();
 
-            return response()->json(['statusCode' => 1, 'data' => 'OK']);
+            $data = Order::where('id', $order->id)->with('pemandu', 'wisatawan', 'museum')->first();
+
+            // //broadcast data
+            // $data = json_decode($this->getOrder(0));
+            // broadcast(new OrderEvent($data));
+
+            return response()->json(['statusCode' => 1, 'data' => $data]);
         } else {
             return response()->json(['statusCode' => 0, 'data' => 'Tidak Menemukan Pemandu']);
         }
+    }
+
+    protected function getOrder($status)
+    {
+        $order = Order::where('status', $status)->get();
+
+        return $order;
     }
 
     public function giveMuseumRating(Request $request, $id)
@@ -197,7 +218,7 @@ class MobileController extends Controller
 
     protected function collaborativeFilter($museum_id)
     {
-        $getOrderData = Order::where('museum_id', $museum_id)->orderBy('rating', 'DESC')->get()->unique('pelanggan_id');
+        $getOrderData = Order::where('museum_id', $museum_id)->orderBy("rating", "DESC")->get()->unique('pelanggan_id');
 
         $dataUser = count($getOrderData);
 
@@ -216,12 +237,64 @@ class MobileController extends Controller
     {
         $pemandu = User::where(['role_id' => 2, 'status' => 1])->inRandomOrder()->first();
 
+        $pemandu->status = 0;
+        $pemandu->save();
+
         return $pemandu;
     }
 
     //Modul Pemandu
-    public function getDataOrder()
+    public function changeStatus(Request $request, $id)
     {
+        $dataUser = User::find($id);
+
+        if (!empty($dataUser)) {
+            $dataUser->status = $request->get('status');
+            $dataUser->save();
+
+            return response()->json(['statusCode' => 1, 'data' => 'OK']);
+        } else {
+            return response()->json(['statusCode' => 0, 'data' => 'Data Tidak Ditemukan']);
+        }
+    }
+
+    public function acceptOrder($id)
+    {
+        $order = Order::find($id);
+
+        if (!empty($order)) {
+            $order->status = 2;
+            $order->save();
+
+            return response()->json(['statusCode' => 1, 'data' => 'OK']);
+        }
+
+        return response()->json(['statusCode' => 0, 'data' => 'Data Tidak Ditemukan']);
+    }
+
+    public function cancelOrder($id)
+    {
+        $order = Order::find($id);
+
+        if (!empty($order)) {
+            $order->status = -1;
+            $order->save();
+
+            return response()->json(['statusCode' => 1, 'data' => 'OK']);
+        }
+
+        return response()->json(['statusCode' => 0, 'data' => 'Data Tidak Ditemukan']);
+    }
+
+    public function getDataOrder($status)
+    {
+        $dataOrder = Order::where([["pemandu_id", "=", $id], ["status", "=", "0"]])->first();
+
+        if (!empty($dataOrder)) {
+            return response()->json(['statusCode' => 1, 'data' => $dataOrder]);
+        } else {
+            return response()->json(['statusCode' => 0, 'data' => 'Data Tidak Ditemukan']);
+        }
         
     }
 }

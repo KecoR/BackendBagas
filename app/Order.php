@@ -12,6 +12,11 @@ class Order extends Model
         return $this->belongsTo('App\User', 'pemandu_id', 'id');
     }
 
+    public function wisatawan()
+    {
+        return $this->belongsTo('App\User', 'pelanggan_id', 'id');
+    }
+
     public function museum()
     {
         return $this->belongsTo('App\Museum', 'museum_id', 'id');

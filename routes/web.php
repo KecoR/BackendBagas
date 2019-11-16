@@ -34,6 +34,11 @@ Route::group(['prefix' => 'api/v1'], function () {
 
 
     //Modul Pemandu
+    Route::get('pemandu/{id}/getDataOrder', 'MobileController@getDataOrder');
+
+    Route::put('pemandu/{id}/changeStatus', 'MobileController@changeStatus');
+    Route::put('order/{id}/acceptOrder', 'MobileController@acceptOrder');
+    Route::put('order/{id}/cancelOrder', 'MobileController@cancelOrder');
 });
 
 Route::get('/', function () {
