@@ -20,6 +20,7 @@ class CreateOrdersTable extends Migration
             $table->bigInteger('pemandu_id');
             $table->string('rating')->nullable();
             $table->char('status', 5)->default('0');
+            $table->string('message_id')->nullable();
             $table->timestamps();
         });
     }

@@ -46,9 +46,6 @@ class MobileController extends Controller
             $user->full_name = $request->get('full_name');
             $user->email = $request->get('email');
             $user->password = Hash::make($request->get('password'));
-            $user->no_hp = $request->get('no_hp');
-            $user->alamat = $request->get('alamat');
-            $user->date_birth = $request->get('date_birth');
             $user->role_id = $request->get('role');
             $user->save();
 
@@ -112,6 +109,20 @@ class MobileController extends Controller
         } else {
             return response()->json(['statusCode' => 0, 'data' => 'User Tidak Ditemukan']);
         }
+    }
+
+    public function editMessageID(Request $request, $id)
+    {
+        $order = Order::find($id);
+
+        if (!empty($order)) {
+            $order->message_id = $request->get('message_id');
+            $order->save();
+
+            return response()->json(['statusCoded' => 1, 'data' => 'OK']);
+        }
+
+        return response()->json(['statusCode' => 0, 'data' => 'Data Tidak Ditemukan']);
     }
 
     //Modul Pelanggan
@@ -286,6 +297,18 @@ class MobileController extends Controller
         return response()->json(['statusCode' => 0, 'data' => 'Data Tidak Ditemukan']);
     }
 
+    public function historyOrderPemandu($id)
+    {
+        // $history = Order::where('pelanggan_id', $id)->get();
+        $history = Order::where('pemandu_id', $id)->with('wisatawan', 'museum')->get();
+
+        if (count($history) > 0) {
+            return response()->json(['statusCode' => 1, 'data' => $history]);
+        } else {
+            return response()->json(['statusCode' => 0, 'data' => 'Data Tidak Ditemukan']);
+        }
+    }
+
     public function getDataOrder($status)
     {
         $dataOrder = Order::where([["pemandu_id", "=", $id], ["status", "=", "0"]])->first();
@@ -296,5 +319,19 @@ class MobileController extends Controller
             return response()->json(['statusCode' => 0, 'data' => 'Data Tidak Ditemukan']);
         }
         
+    }
+
+    public function finishOrder($id)
+    {
+        $order = Order::find($id);
+
+        if (!empty($order)) {
+            $order->status = 1;
+            $order->save();
+
+            return response()->json(['statusCode' => 1, 'data' => 'OK']);
+        }
+
+        return response()->json(['statusCode' => 0, 'data' => 'Failed']);
     }
 }

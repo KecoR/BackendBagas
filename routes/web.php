@@ -21,6 +21,7 @@ Route::group(['prefix' => 'api/v1'], function () {
     Route::post('doRegist', 'MobileController@doRegist');
     
     Route::put('user/{id}/editProfile', 'MobileController@editProfile');
+    Route::put('order/{id}/editMessageID', 'MobileController@editMessageID');
 
     //Modul Pelanggan
     Route::get('museum', 'MobileController@getMuseumData');
@@ -35,10 +36,12 @@ Route::group(['prefix' => 'api/v1'], function () {
 
     //Modul Pemandu
     Route::get('pemandu/{id}/getDataOrder', 'MobileController@getDataOrder');
+    Route::get('pemandu/{id}/historyOrder', 'MobileController@historyOrderPemandu');
 
     Route::put('pemandu/{id}/changeStatus', 'MobileController@changeStatus');
     Route::put('order/{id}/acceptOrder', 'MobileController@acceptOrder');
     Route::put('order/{id}/cancelOrder', 'MobileController@cancelOrder');
+    Route::put('order/{id}/finishOrder', 'MobileController@finishOrder');
 });
 
 Route::get('/', function () {
